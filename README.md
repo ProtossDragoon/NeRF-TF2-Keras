@@ -43,9 +43,7 @@ python3 train.py
 
 ## Results
 
-![FILLME]()
-
-![FILLME]()
+![FILLME](https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/training.gif)
 
 ## Note
 
