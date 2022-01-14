@@ -60,7 +60,7 @@ class SaveBestModel(tf.keras.callbacks.ModelCheckpoint):
         if tf.io.gfile.exists(self.savedmodel_dir):
             path = tf.io.gfile.join(self.savedmodel_dir, 'nerf_params.json')
             with open(path, 'w') as f:
-                json.dump(self.nerf_params.__dict__, f, cls=NumpyEncoder)
+                json.dump(self.nerf_params.__dict__, f, indent=4, cls=NumpyEncoder)
 
 
 class NumpyEncoder(json.JSONEncoder):
