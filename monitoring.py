@@ -11,6 +11,7 @@ import tqdm
 import json
 
 # NeRF project
+from utils import runtime
 from parameters import NeRFParams
 from nerf_core.nerf import NeRFModel
 
@@ -137,8 +138,9 @@ class TrainingMonitor(tf.keras.callbacks.Callback):
         ax[2].set_title(f"Loss Plot: {epoch:03d}")
 
         fig.savefig(tf.io.gfile.join(self.save_dir, f'{epoch:03d}.png'))
-        
-        plt.show(block=(not self.close_fig))
-        if self.close_fig:
-            plt.pause(1)
-        plt.close()
+
+        if not runtime.RuntimeChecker.colab_mode:
+            plt.show(block=(not self.close_fig))
+            if self.close_fig:
+                plt.pause(1)
+            plt.close()
