@@ -143,4 +143,4 @@ class TrainingMonitor(tf.keras.callbacks.Callback):
             plt.show(block=(not self.close_fig))
             if self.close_fig:
                 plt.pause(1)
-            plt.close()
+        plt.close()
