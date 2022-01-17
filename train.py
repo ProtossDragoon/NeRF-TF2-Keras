@@ -39,8 +39,8 @@ def main():
     nerf_model.fit(
         train_ds,
         validation_data=val_ds,
-        batch_size=nerf_params.BATCH_SIZE,
-        epochs=nerf_params.EPOCHS,
+        batch_size=nerf_params.batch_size,
+        epochs=nerf_params.epochs,
         callbacks=[
             TrainingMonitor(
                 sample_batched_test_rays_flat,
@@ -48,7 +48,7 @@ def main():
                 nerf_model, nerf_params, image_result_save_dir
             ),
             SaveBestModel(weights_save_dir, nerf_params,)],
-        steps_per_epoch=(num_images * nerf_params.TRAIN_TEST_SPLIT) // nerf_params.BATCH_SIZE,
+        steps_per_epoch=(num_images * nerf_params.TRAIN_TEST_SPLIT) // nerf_params.batch_size,
     )
 
 

@@ -26,7 +26,7 @@ def setUpModule():
 class SmallDatasetShortTraining(unittest.TestCase):
     
     def setUp(self):
-        nerf_params.EPOCHS = 2
+        nerf_params.epochs = 2
 
     def test_short_training(self):
         train_ds, val_ds = simple_dataloader.get_train_val_tf_ds(images, poses, nerf_params)
@@ -49,9 +49,9 @@ class SmallDatasetShortTraining(unittest.TestCase):
         nerf_model.fit(
             train_ds,
             validation_data=val_ds,
-            batch_size=nerf_params.BATCH_SIZE,
-            epochs=nerf_params.EPOCHS,
-            steps_per_epoch=(num_images * nerf_params.TRAIN_TEST_SPLIT) // nerf_params.BATCH_SIZE,
+            batch_size=nerf_params.batch_size,
+            epochs=nerf_params.epochs,
+            steps_per_epoch=(num_images * nerf_params.TRAIN_TEST_SPLIT) // nerf_params.batch_size,
         )
 
 
