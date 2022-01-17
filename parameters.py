@@ -3,11 +3,15 @@ import numpy as np
 
 
 class CommonParams():
+
     # Initialize global variables.
     AUTO = tf.data.AUTOTUNE
-    BATCH_SIZE = 5
-    EPOCHS = 40
     TRAIN_TEST_SPLIT = 0.8
+
+    def __init__(self
+    ):
+        self.batch_size = 5
+        self.epochs = 40
 
 
 class NeRFParams(CommonParams):
@@ -21,6 +25,7 @@ class NeRFParams(CommonParams):
         n_samples_per_ray:int=32,
         image_ch:int=3,
     ):
+        super().__init__()
         if image_ch != 3:
             raise NotImplementedError('Other cases were not implemented.')
 

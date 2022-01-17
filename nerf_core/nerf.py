@@ -130,7 +130,7 @@ class NeRFModel(ValidateNeRFModel):
         # Get the predictions from the nerf model and reshape it.
         predictions = self.nerf_model(rays_flat)
         predictions = tf.reshape(predictions, shape=(
-                self.nerf_params.BATCH_SIZE, 
+                self.nerf_params.batch_size, 
                 self.nerf_params.image_h,
                 self.nerf_params.image_w,
                 self.nerf_params.n_samples_per_ray, 
@@ -146,13 +146,13 @@ class NeRFModel(ValidateNeRFModel):
         delta = t_vals[..., 1:] - t_vals[..., :-1]
         if rand:
             delta = tf.concat(
-                [delta, tf.broadcast_to([1e10], shape=(self.nerf_params.BATCH_SIZE, self.nerf_params.image_h, self.nerf_params.image_w, 1))], 
+                [delta, tf.broadcast_to([1e10], shape=(self.nerf_params.batch_size, self.nerf_params.image_h, self.nerf_params.image_w, 1))], 
                 axis=-1
             )
             alpha = 1.0 - tf.exp(-sigma_a * delta)
         else:
             delta = tf.concat(
-                [delta, tf.broadcast_to([1e10], shape=(self.nerf_params.BATCH_SIZE, 1))], 
+                [delta, tf.broadcast_to([1e10], shape=(self.nerf_params.batch_size, 1))], 
                 axis=-1
             )
             alpha = 1.0 - tf.exp(-sigma_a * delta[:, None, None, :])

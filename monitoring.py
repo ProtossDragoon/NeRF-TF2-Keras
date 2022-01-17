@@ -83,8 +83,8 @@ class TrainingMonitor(tf.keras.callbacks.Callback):
         close_fig:bool=True,
         save_dir:str='./result_images',
     ):
-        assert sample_batched_test_rays_flat.shape[0] == nerf_params.BATCH_SIZE
-        assert sample_batched_test_t_vals.shape[0] == nerf_params.BATCH_SIZE
+        assert sample_batched_test_rays_flat.shape[0] == nerf_params.batch_size
+        assert sample_batched_test_t_vals.shape[0] == nerf_params.batch_size
 
         super().__init__()
         self.sample_batched_test_rays_flat = sample_batched_test_rays_flat
@@ -134,7 +134,7 @@ class TrainingMonitor(tf.keras.callbacks.Callback):
 
         self.loss_list.append(logs["loss"])
         ax[2].plot(self.loss_list)
-        ax[2].set_xticks(np.arange(0, self.nerf_params.EPOCHS + 1, 5.0))
+        ax[2].set_xticks(np.arange(0, self.nerf_params.epochs + 1, 5.0))
         ax[2].set_title(f"Loss Plot: {epoch:03d}")
 
         fig.savefig(tf.io.gfile.join(self.save_dir, f'{epoch:03d}.png'))

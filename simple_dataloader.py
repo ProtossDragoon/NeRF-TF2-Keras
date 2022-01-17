@@ -49,8 +49,8 @@ def get_train_ds(train_images, train_poses, nerf_params):
     _train_zip_ds = get_zip_from_ds(train_images, train_poses, nerf_params)
     train_ds = (
         _train_zip_ds
-        .shuffle(nerf_params.BATCH_SIZE)
-        .batch(nerf_params.BATCH_SIZE, drop_remainder=True, num_parallel_calls=nerf_params.AUTO)
+        .shuffle(nerf_params.batch_size)
+        .batch(nerf_params.batch_size, drop_remainder=True, num_parallel_calls=nerf_params.AUTO)
         .prefetch(nerf_params.AUTO)
     )
     return train_ds
@@ -61,8 +61,8 @@ def get_val_ds(val_images, val_poses, nerf_params):
     _val_zip_ds = get_zip_from_ds(val_images, val_poses, nerf_params)
     val_ds = (
         _val_zip_ds
-        .shuffle(nerf_params.BATCH_SIZE)
-        .batch(nerf_params.BATCH_SIZE, drop_remainder=True, num_parallel_calls=nerf_params.AUTO)
+        .shuffle(nerf_params.batch_size)
+        .batch(nerf_params.batch_size, drop_remainder=True, num_parallel_calls=nerf_params.AUTO)
         .prefetch(nerf_params.AUTO)
     )
     return val_ds
