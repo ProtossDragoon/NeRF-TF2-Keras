@@ -43,7 +43,11 @@ python3 train.py
 
 ## Results
 
-![FILLME](https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/training.gif)
+*20 epoch, 32 samples per ray*
+![40epoch_32samples](https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/training.gif)
+
+*80 epoch, 64 samples per ray*
+![80epoch_64samples](https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/training_2.gif)
 
 ## Note
 
