@@ -22,8 +22,8 @@ class SaveBestModel(tf.keras.callbacks.ModelCheckpoint):
         self,
         weights_save_dir,
         nerf_params,
-        mode = "min",
-        monitor = "val_loss"
+        mode="min",
+        monitor="val_loss"
     ):
         self.weights_save_dir = weights_save_dir
         self.nerf_params = nerf_params
@@ -82,6 +82,7 @@ class TrainingMonitor(tf.keras.callbacks.Callback):
         nerf_params:NeRFParams,
         close_fig:bool=True,
         save_dir:str='./result_images',
+        gif_name:str='result.gif'
     ):
         assert sample_batched_test_rays_flat.shape[0] == nerf_params.batch_size
         assert sample_batched_test_t_vals.shape[0] == nerf_params.batch_size
@@ -94,6 +95,7 @@ class TrainingMonitor(tf.keras.callbacks.Callback):
         self.loss_list = []
         self.close_fig = close_fig
         self.save_dir = save_dir
+        self.gif_name = gif_name
         # Create a directory to save the images during training.
         tf.io.gfile.makedirs(save_dir)
     
@@ -101,18 +103,18 @@ class TrainingMonitor(tf.keras.callbacks.Callback):
         self,
         logs=None,
     ):
-        def create_gif(path_to_images, giffile_name):
+        def create_gif(path_to_images, gif_fullpath):
             filenames = tf.io.gfile.glob(path_to_images)
             filenames = sorted(filenames)
             images = []
             for filename in tqdm.tqdm(filenames):
                 images.append(imageio.imread(filename))
             kwargs = {"duration": 0.25}
-            imageio.mimsave(giffile_name, images, "GIF", **kwargs)
+            imageio.mimsave(gif_fullpath, images, "GIF", **kwargs)
 
         images_path = tf.io.gfile.join(self.save_dir, '*.png')
-        giffile_name = tf.io.gfile.join(self.save_dir, 'result.gif')
-        create_gif(images_path, giffile_name)
+        gif_fullpath = tf.io.gfile.join(self.save_dir, self.gif_name)
+        create_gif(images_path, gif_fullpath)
         
     def on_epoch_end(
         self, 
