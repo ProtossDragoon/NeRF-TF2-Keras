@@ -18,14 +18,14 @@ def pose_to_ray(
     Returns:
         Tuple of flattened rays and sample points corresponding to the camera pose.
     """
-    (ray_origins, ray_directions) = get_rays(
+    (ray_origin, ray_directions) = get_rays(
         height=image_h,
         width=image_w,
         focal=focal_length,
         pose=pose,
     )
     (rays_flat, t_vals) = render_flat_rays(
-        ray_origins=ray_origins,
+        ray_origin=ray_origin,
         ray_directions=ray_directions,
         near=2.0,
         far=6.0,
@@ -81,32 +81,22 @@ def get_rays(
 
     # Create the direction unit vectors.
     # directions.shape : (w, h, 3), homogeneous coordiante
-    directions = tf.stack([transformed_x, -transformed_y, -tf.ones_like(mesh_x)], axis=-1)
+    pixel_directions = tf.stack([transformed_x, -transformed_y, -tf.ones_like(mesh_x)], axis=-1)
 
-    # Get the camera matrix.
-    rotation = pose[:3, :3]
-    translation = pose[:3, -1]
+    # Get the camera extrinsic matrix.
+    camera_rotation = pose[:3, :3]
+    camera_translation = pose[:3, -1]
 
-    # Get origins and directions for the rays.
-    transformed_dirs = directions[..., None, :] # (w, h, 1, 3)
-    camera_dirs = tf.math.multiply(transformed_dirs, rotation)
-    #camera_dirs = transformed_dirs * rotation # 물리공간(월드) 언어(좌표계)로, 정규화이미지평면 위 존재하는 좌표를 번역하려고 함.
-    # 여기서 일어나는 연산 : (1, 3) -> [[norm(x), -norm(y), -1]] -> (3, 3) broadcasting 
-    #[[norm(x)*R_x_x, -norm(y)*R_y_x, -1*R_z_x],
-    # [norm(x)*R_x_y, -norm(y)*R_y_y, -1*R_z_y],
-    # [norm(x)*R_x_z, -norm(y)*R_y_z, -1*R_z_z]]
-    # 이것이 영상의 모든 픽셀 (모든 x, y) 에 대해서 적용된다고 생각하면 됨.
-    
-    ray_directions = tf.reduce_sum(camera_dirs, axis=-1) # 물리공간(월드) 언어(좌표계)로, 정규화이미지평면 위 존재하는 점의 좌표값을 얻음.
-    #[[norm(x)*R_x_x + -norm(y)*R_y_x + -1*R_z_x], -> [X,
-    # [norm(x)*R_x_y + -norm(y)*R_y_y + -1*R_z_y], ->  Y,
-    # [norm(x)*R_x_z + -norm(y)*R_y_z + -1*R_z_z]] ->  Z]
-    # (w, h, 3)
+    # Get origin and directions for the rays.    
+    ## directions
+    pixel_directions = pixel_directions[..., None, :] # (w, h, 1, 3)
+    ray_directions = tf.math.multiply(pixel_directions, camera_rotation) # (w, h, 3, 3)
+    ray_directions = tf.reduce_sum(pixel_directions, axis=-1) # (w, h, 3)
+    ## origin
+    ray_origin = tf.broadcast_to(camera_translation, tf.shape(ray_directions)) # (3,) -> (w, h, 3)
 
-    ray_origins = tf.broadcast_to(translation, tf.shape(ray_directions)) # (3,) -> (w, h, 3)
-
-    # Return the origins and directions.
-    return (ray_origins, ray_directions)
+    # Return the origin and directions.
+    return (ray_origin, ray_directions)
 
 
 def image_plane_to_normalized_plane(
@@ -131,7 +121,7 @@ def image_plane_to_normalized_plane(
 """
 @tf.function(
     input_signature=[
-        tf.TensorSpec(shape=[None, None, 3], dtype=tf.float32),  # ray_origins
+        tf.TensorSpec(shape=[None, None, 3], dtype=tf.float32),  # ray_origin
         tf.TensorSpec(shape=[None, None, 3], dtype=tf.float32),  # ray_directions
         tf.TensorSpec(shape=[], dtype=tf.float32),        # near
         tf.TensorSpec(shape=[], dtype=tf.float32),        # far
@@ -140,7 +130,7 @@ def image_plane_to_normalized_plane(
     ]
 )"""
 def render_flat_rays(
-    ray_origins, 
+    ray_origin, 
     ray_directions, 
     near, 
     far, 
@@ -150,7 +140,7 @@ def render_flat_rays(
     """Renders the rays and flattens it.
 
     Args:
-        ray_origins: The origin points for rays.
+        ray_origin: The origin points for rays.
         ray_directions: The direction unit vectors for the rays.
         near: The near bound of the volumetric scene.
         far: The far bound of the volumetric scene.
@@ -173,7 +163,7 @@ def render_flat_rays(
             trainable=False, 
             dtype=tf.int32
         )
-        shape[:-1].assign(ray_origins.shape[:-1])
+        shape[:-1].assign(ray_origin.shape[:-1])
         shape[ -1].assign(n_samples_per_ray)
         noise = tf.random.uniform(shape=shape) # generate 0~1 uniform nosie
         noise = noise * tf.cast(far-near, tf.float32) # generate 0~(far-near) uniform noise
@@ -182,7 +172,7 @@ def render_flat_rays(
         t_vals = t_vals + noise # (n) + (h, w, n) -> (h, w, n)
 
     # Equation: r(t) = o + td -> Building the "r" here.
-    o = ray_origins[..., None, :]
+    o = ray_origin[..., None, :]
     td = ray_directions[..., None, :] * t_vals[..., None]
     rays = tf.cast(o, dtype=tf.float32) + td
     # if cond : (h, w, 1, 3) + ((h, w, 1, 3) * (n, 1,))
