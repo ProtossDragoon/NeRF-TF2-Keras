@@ -18,7 +18,7 @@ def pose_to_ray(
     Returns:
         Tuple of flattened rays and sample points corresponding to the camera pose.
     """
-    (ray_origin, ray_directions) = get_rays(
+    (ray_origin, ray_directions) = get_ray_origin_and_directions(
         height=image_h,
         width=image_w,
         focal=focal_length,
@@ -38,7 +38,7 @@ def pose_to_ray(
     return (rays_flat, ray_t)
 
 
-def get_rays(
+def get_ray_origin_and_directions(
     height, 
     width, 
     focal, 
@@ -155,36 +155,33 @@ def render_flat_rays(
     ray_t = tf.linspace(near, far, n_samples_per_ray) # (n,)
     ray_t = tf.cast(ray_t, tf.float32)
     # e.g. (2., 2.1, 2.2, ... , 6)
-    
+
+    shape = tf.Variable(
+        initial_value=[0, 0, 0,], 
+        trainable=False, 
+        dtype=tf.int32
+    )
+    shape[:-1].assign(ray_origin.shape[:-1])
+    shape[ -1].assign(n_samples_per_ray)
+
     if rand:
         # Inject uniform noise into sample space to make the sampling continuous.
-        shape = tf.Variable(
-            initial_value=[0, 0, 0,], 
-            trainable=False, 
-            dtype=tf.int32
-        )
-        shape[:-1].assign(ray_origin.shape[:-1])
-        shape[ -1].assign(n_samples_per_ray)
         noise = tf.random.uniform(shape=shape) # generate 0~1 uniform nosie
         noise = noise * tf.cast(far-near, tf.float32) # generate 0~(far-near) uniform noise
         noise = noise / tf.cast(n_samples_per_ray, tf.float32) # generate 0~((far-near)/n) uniform noise
         ray_t = ray_t + noise # (n) + (h, w, n) -> (h, w, n)
+    else:
+        ray_t = ray_t + tf.zeros_like(shape=shape, dtype=tf.float32)  # (n) + (h, w, n) -> (h, w, n)
     
-    # if condition
+    # Always
     ## ray_t.shape: (h, w, n)
-    # else condition
-    ## ray_t.shape: (n,)
 
     # Equation: r(t) = o + td -> Building the "r" here.
     o = ray_origin[..., None, :]
     td = ray_directions[..., None, :] * ray_t[..., None]
     rays = tf.cast(o, dtype=tf.float32) + td
     
-    # if condition
-    ## o.shape: (h, w, 1, 3)
-    ## td.shape: (h, w, n, 3) = ((h, w, 1, 3) * (h, w, n, 1))
-    ## rays.shape: (h, w, n, 3)
-    # else condition
+    # Always
     ## o.shape: (h, w, 1, 3)
     ## td.shape: (h, w, n, 3) = ((h, w, 1, 3) * (n, 1))
     ## rays.shape: (h, w, n, 3)
