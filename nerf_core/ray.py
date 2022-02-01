@@ -24,7 +24,7 @@ def pose_to_ray(
         focal=focal_length,
         pose=pose,
     )
-    (rays_flat, t_vals) = render_flat_rays(
+    (rays_flat, ray_t) = render_flat_rays(
         ray_origin=ray_origin,
         ray_directions=ray_directions,
         near=2.0,
@@ -35,7 +35,7 @@ def pose_to_ray(
     rays_flat = encode_position(
         rays_flat, 
         pos_encoding_dims=pos_encoding_dims)
-    return (rays_flat, t_vals)
+    return (rays_flat, ray_t)
 
 
 def get_rays(
@@ -152,12 +152,12 @@ def render_flat_rays(
     """
     # Compute 3D query points.
     # Equation: r(t) = o+td -> Building the "t" here.
-    t_vals = tf.linspace(near, far, n_samples_per_ray) # (n,)
-    t_vals = tf.cast(t_vals, tf.float32)
+    ray_t = tf.linspace(near, far, n_samples_per_ray) # (n,)
+    ray_t = tf.cast(ray_t, tf.float32)
     # e.g. (2., 2.1, 2.2, ... , 6)
+    
     if rand:
-        # Inject uniform noise into sample space to make the sampling
-        # continuous
+        # Inject uniform noise into sample space to make the sampling continuous.
         shape = tf.Variable(
             initial_value=[0, 0, 0,], 
             trainable=False, 
@@ -168,20 +168,33 @@ def render_flat_rays(
         noise = tf.random.uniform(shape=shape) # generate 0~1 uniform nosie
         noise = noise * tf.cast(far-near, tf.float32) # generate 0~(far-near) uniform noise
         noise = noise / tf.cast(n_samples_per_ray, tf.float32) # generate 0~((far-near)/n) uniform noise
-        # noise : (n,)
-        t_vals = t_vals + noise # (n) + (h, w, n) -> (h, w, n)
+        ray_t = ray_t + noise # (n) + (h, w, n) -> (h, w, n)
+    
+    # if condition
+    ## ray_t.shape: (h, w, n)
+    # else condition
+    ## ray_t.shape: (n,)
 
     # Equation: r(t) = o + td -> Building the "r" here.
     o = ray_origin[..., None, :]
-    td = ray_directions[..., None, :] * t_vals[..., None]
+    td = ray_directions[..., None, :] * ray_t[..., None]
     rays = tf.cast(o, dtype=tf.float32) + td
-    # if cond : (h, w, 1, 3) + ((h, w, 1, 3) * (n, 1,))
-    # else    : (h, w, 1, 3) + ((h, w, 1, 3) * (n, 1,))
-    # broadcasting (n, 1) -> (n, 3), (h, w, 1, 3) -> (h, w, n, 3)
-    # res     : (h, w, n, 3) = (h, w, 1, 3) + (h, w, n, 3)
-    # 해석: 월드좌표계의 언어로 해석한, 정규이미지평면 위의 점들인 (w, h) 격자 각각에 n 개씩 존재함.
+    
+    # if condition
+    ## o.shape: (h, w, 1, 3)
+    ## td.shape: (h, w, n, 3) = ((h, w, 1, 3) * (h, w, n, 1))
+    ## rays.shape: (h, w, n, 3)
+    # else condition
+    ## o.shape: (h, w, 1, 3)
+    ## td.shape: (h, w, n, 3) = ((h, w, 1, 3) * (n, 1))
+    ## rays.shape: (h, w, n, 3)
+
     rays_flat = tf.reshape(rays, [-1, 3])
-    return (rays_flat, t_vals)
+
+    # Always
+    ## rays_flat.shape: (h*w*n, 3)
+
+    return (rays_flat, ray_t)
 
 
 @tf.function(
