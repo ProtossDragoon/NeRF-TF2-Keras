@@ -91,7 +91,7 @@ def get_rays(
     ## directions
     pixel_directions = pixel_directions[..., None, :] # (w, h, 1, 3)
     ray_directions = tf.math.multiply(pixel_directions, camera_rotation) # (w, h, 3, 3)
-    ray_directions = tf.reduce_sum(pixel_directions, axis=-1) # (w, h, 3)
+    ray_directions = tf.reduce_sum(ray_directions, axis=-1) # (w, h, 3)
     ## origin
     ray_origin = tf.broadcast_to(camera_translation, tf.shape(ray_directions)) # (3,) -> (w, h, 3)
 
