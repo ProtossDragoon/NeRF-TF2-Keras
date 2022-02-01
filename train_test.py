@@ -14,8 +14,10 @@ def setUpModule():
     global images, poses, focal_length
     global num_images
     global nerf_params
+    # Load numpy formed data.
     images, poses, focal_length = simple_dataloader.get_np_data_from_local_file('./tiny_nerf_data.npz')
     num_images, image_h, image_w, _ = images.shape
+    # Save params.
     nerf_params = NeRFParams(
         image_h=image_h,
         image_w=image_w,

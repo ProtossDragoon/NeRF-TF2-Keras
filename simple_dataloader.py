@@ -100,24 +100,4 @@ def get_train_val_tf_ds(
 
 
 if __name__ == '__main__':
-    # Load numpy formed data.
-    images, poses, focal_length = get_np_data_from_local_file('./tiny_nerf_data.npz')
-    num_images, image_h, image_w, _ = images.shape
-    
-    # Save params.
-    nerf_params = NeRFParams(
-        image_h=image_h,
-        image_w=image_w,
-        focal_length=focal_length,
-    )
-
-    # Get dataset.
-    train_ds, val_ds = get_train_val_tf_ds(
-        images, 
-        poses, 
-        nerf_params
-    )
-
-    # Test.
-    it = iter(train_ds)
-    next(it)
+    pass
