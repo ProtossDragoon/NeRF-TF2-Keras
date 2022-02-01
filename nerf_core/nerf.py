@@ -119,8 +119,8 @@ class NeRFModel(ValidateNeRFModel):
         """Generates the RGB image and depth map from model prediction.
 
         Args:
-            rays_flat: The flattened rays that serve as the input to
-                the NeRF model.
+            rays_flat: The flattened rays 
+                that serve as the input to the NeRF model.
             ray_t: The sample points for the rays.
             rand: Choice to randomise the sampling strategy.
 
