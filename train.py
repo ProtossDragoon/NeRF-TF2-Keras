@@ -9,7 +9,7 @@ from nerf_core import loss
 
 
 def main():
-    images, poses, focal_length = simple_dataloader.get_np_data_from_local_file('./tiny_nerf_data.npz')
+    images, poses, focal_length = simple_dataloader.get_np_data_from_local_file('./data/tiny_nerf_data.npz')
     num_images, image_h, image_w, _ = images.shape
     nerf_params = NeRFParams(
         image_h=image_h,
