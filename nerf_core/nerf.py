@@ -41,10 +41,10 @@ class NeRFModel(ValidateNeRFModel):
         self,
         rays,
     ):
-        rays_flat, t_vals = rays
+        rays_flat, ray_t = rays
         return self.render_rgb_depth(
             rays_flat=rays_flat,
-            t_vals=t_vals,
+            ray_t=ray_t,
         )
 
     def train_step(
@@ -53,13 +53,13 @@ class NeRFModel(ValidateNeRFModel):
     ):
         # Get the images and the rays.
         (images, rays) = inputs
-        (rays_flat, t_vals) = rays
+        (rays_flat, ray_t) = rays
 
         with tf.GradientTape() as tape:
             # Get the predictions from the model.
             rgb, _ = self.render_rgb_depth(
                 rays_flat=rays_flat, 
-                t_vals=t_vals, 
+                ray_t=ray_t, 
             )
             loss = self.loss_fn(images, rgb)
 
@@ -87,12 +87,12 @@ class NeRFModel(ValidateNeRFModel):
         # Get the images and the rays.
         (images, rays) = inputs
         # Tuple of flattened rays and sample points corresponding to the camera pose.
-        (rays_flat, t_vals) = rays
+        (rays_flat, ray_t) = rays
 
         # Get the predictions from the model.
         rgb, _ = self.render_rgb_depth( 
             rays_flat=rays_flat, 
-            t_vals=t_vals, 
+            ray_t=ray_t, 
         )
         loss = self.loss_fn(images, rgb)
 
@@ -113,7 +113,7 @@ class NeRFModel(ValidateNeRFModel):
     def render_rgb_depth(
         self,
         rays_flat, 
-        t_vals,
+        ray_t,
         rand=True,
     ):
         """Generates the RGB image and depth map from model prediction.
@@ -121,7 +121,7 @@ class NeRFModel(ValidateNeRFModel):
         Args:
             rays_flat: The flattened rays that serve as the input to
                 the NeRF model.
-            t_vals: The sample points for the rays.
+            ray_t: The sample points for the rays.
             rand: Choice to randomise the sampling strategy.
 
         Returns:
@@ -143,7 +143,7 @@ class NeRFModel(ValidateNeRFModel):
         sigma_a = tf.nn.relu(predictions[..., -1])
 
         # Get the distance of adjacent intervals.
-        delta = t_vals[..., 1:] - t_vals[..., :-1]
+        delta = ray_t[..., 1:] - ray_t[..., :-1]
         if rand:
             delta = tf.concat(
                 [delta, tf.broadcast_to([1e10], shape=(self.nerf_params.batch_size, self.nerf_params.image_h, self.nerf_params.image_w, 1))], 
@@ -165,8 +165,8 @@ class NeRFModel(ValidateNeRFModel):
 
         # Get depth
         if rand:
-            depth_map = tf.reduce_sum(weights * t_vals, axis=-1)
+            depth_map = tf.reduce_sum(weights * ray_t, axis=-1)
         else:
-            depth_map = tf.reduce_sum(weights * t_vals[:, None, None], axis=-1)
+            depth_map = tf.reduce_sum(weights * ray_t[:, None, None], axis=-1)
 
         return (rgb, depth_map)

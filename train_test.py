@@ -14,8 +14,10 @@ def setUpModule():
     global images, poses, focal_length
     global num_images
     global nerf_params
-    images, poses, focal_length = simple_dataloader.get_np_data_from_local_file('./tiny_nerf_data.npz')
+    # Load numpy formed data.
+    images, poses, focal_length = simple_dataloader.get_np_data_from_local_file('./data/tiny_nerf_data.npz')
     num_images, image_h, image_w, _ = images.shape
+    # Save params.
     nerf_params = NeRFParams(
         image_h=image_h,
         image_w=image_w,
@@ -40,7 +42,7 @@ class SmallDatasetShortTraining(unittest.TestCase):
         )
 
         sample_batched_test_imgs, sample_batched_test_rays = next(iter(train_ds))
-        sample_batched_test_rays_flat, sample_batched_test_t_vals = sample_batched_test_rays
+        sample_batched_test_rays_flat, sample_batched_test_ray_t = sample_batched_test_rays
 
         # build shape
         nerf_model(sample_batched_test_rays)

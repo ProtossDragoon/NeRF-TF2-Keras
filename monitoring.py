@@ -77,7 +77,7 @@ class TrainingMonitor(tf.keras.callbacks.Callback):
     def __init__(
         self,
         sample_batched_test_rays_flat,
-        sample_batched_test_t_vals,
+        sample_batched_test_ray_t,
         nerf_model:NeRFModel,
         nerf_params:NeRFParams,
         close_fig:bool=True,
@@ -85,11 +85,11 @@ class TrainingMonitor(tf.keras.callbacks.Callback):
         gif_name:str='result.gif'
     ):
         assert sample_batched_test_rays_flat.shape[0] == nerf_params.batch_size
-        assert sample_batched_test_t_vals.shape[0] == nerf_params.batch_size
+        assert sample_batched_test_ray_t.shape[0] == nerf_params.batch_size
 
         super().__init__()
         self.sample_batched_test_rays_flat = sample_batched_test_rays_flat
-        self.sample_batched_test_t_vals = sample_batched_test_t_vals
+        self.sample_batched_test_ray_t = sample_batched_test_ray_t
         self.nerf_params = nerf_params
         self.nerf_model = nerf_model
         self.loss_list = []
@@ -123,7 +123,7 @@ class TrainingMonitor(tf.keras.callbacks.Callback):
     ):
         test_recons_images, depth_maps = self.nerf_model.render_rgb_depth(
             rays_flat=self.sample_batched_test_rays_flat,
-            t_vals=self.sample_batched_test_t_vals,
+            ray_t=self.sample_batched_test_ray_t,
         )
 
         # Plot the rgb, depth and the loss plot.

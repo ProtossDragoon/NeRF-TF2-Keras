@@ -6,27 +6,41 @@ import numpy as np
 
 # NeRF project
 import simple_dataloader
+from parameters import NeRFParams
+
+
+def setUpModule():
+    global images, poses, focal_length
+    global num_images
+    global nerf_params
+    # Load numpy formed data.
+    images, poses, focal_length = simple_dataloader.get_np_data_from_local_file('./data/tiny_nerf_data.npz')
+    num_images, image_h, image_w, _ = images.shape
+    # Save params.
+    nerf_params = NeRFParams(
+        image_h=image_h,
+        image_w=image_w,
+        focal_length=focal_length,
+    )
 
 
 class TestDataLoader(unittest.TestCase):
 
-    def test_pose_to_ray(self):
-        pose = np.ones([4, 4])
-        simple_dataloader.pose_to_ray(
-            pose,
-            image_h=100,
-            image_w=100,
-            focal_length=20,
-            n_samples_per_ray=10,
-            pos_encoding_dims=15,
-        )
+    def test_get_data_from_local_npz_file(self):
+        self.assertEqual(len(images[0].shape), 3, 'Image data should be [h,w,ch] form.')
+        self.assertEqual(tuple(poses[0].shape), (4,4,), 'Pose matrix (camera extrinsic) should be [4,4] shaped.')
+        self.assertEqual(tuple(focal_length.shape), (), 'Focal length should be a constant.')
 
-    def test_encode_position(self):
-        x = np.ones([5, 3], dtype=np.float32)
-        simple_dataloader.encode_position(
-            x,
-            pos_encoding_dims=3,
+    def test_convert_to_tensorflow_dataset_format(self):
+        train_ds, val_ds = simple_dataloader.get_train_val_tf_ds(
+            images, 
+            poses, 
+            nerf_params
         )
+        train_it = iter(train_ds)
+        self.assertEqual(next(train_it)[0].shape[0], nerf_params.batch_size)
+        val_it = iter(val_ds)
+        self.assertEqual(next(val_it)[0].shape[0], nerf_params.batch_size)
 
 
 if __name__ == '__main__':

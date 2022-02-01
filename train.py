@@ -9,7 +9,7 @@ from nerf_core import loss
 
 
 def main():
-    images, poses, focal_length = simple_dataloader.get_np_data_from_local_file('./tiny_nerf_data.npz')
+    images, poses, focal_length = simple_dataloader.get_np_data_from_local_file('./data/tiny_nerf_data.npz')
     num_images, image_h, image_w, _ = images.shape
     nerf_params = NeRFParams(
         image_h=image_h,
@@ -28,7 +28,7 @@ def main():
     )
 
     sample_batched_test_imgs, sample_batched_test_rays = next(iter(train_ds))
-    sample_batched_test_rays_flat, sample_batched_test_t_vals = sample_batched_test_rays
+    sample_batched_test_rays_flat, sample_batched_test_ray_t = sample_batched_test_rays
 
     # build shape
     nerf_model(sample_batched_test_rays)
@@ -44,7 +44,7 @@ def main():
         callbacks=[
             TrainingMonitor(
                 sample_batched_test_rays_flat,
-                sample_batched_test_t_vals,
+                sample_batched_test_ray_t,
                 nerf_model, nerf_params, image_result_save_dir
             ),
             SaveBestModel(weights_save_dir, nerf_params,)],
