@@ -19,11 +19,11 @@ class NeRFModel(ValidateNeRFModel):
     
     def __init__(
         self, 
-        nerf_model:architecture.NeRFArchitecture,
+        nerf_architecture:architecture.NeRFArchitecture,
         nerf_params:NeRFParams,
     ):
-        super().__init__(name=f'nerf_model_{nerf_model.name}')
-        self.nerf_model = nerf_model
+        super().__init__(name=f'nerf_{nerf_architecture.name}')
+        self.nerf_architecture = nerf_architecture
         self.nerf_params = nerf_params
 
     def compile(
@@ -64,7 +64,7 @@ class NeRFModel(ValidateNeRFModel):
             loss = self.loss_fn(images, rgb)
 
         # Get the trainable variables.
-        trainable_variables = self.nerf_model.trainable_variables
+        trainable_variables = self.nerf_architecture.trainable_variables
 
         # Get the gradeints of the trainiable variables with respect to the loss.
         gradients = tape.gradient(loss, trainable_variables)
@@ -128,7 +128,7 @@ class NeRFModel(ValidateNeRFModel):
             Tuple of rgb image and depth map.
         """
         # Get the predictions from the nerf model and reshape it.
-        predictions = self.nerf_model(rays_flat)
+        predictions = self.nerf_architecture(rays_flat)
         predictions = tf.reshape(predictions, shape=(
                 self.nerf_params.batch_size, 
                 self.nerf_params.image_h,
