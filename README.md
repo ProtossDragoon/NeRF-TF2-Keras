@@ -63,6 +63,7 @@ python3 train.py
 ### 3. Test Environments
 
 - 19' MacBook Pro 16inch, 16GB
+- Google COLAB GPU Runtime
 
 ## References
 
