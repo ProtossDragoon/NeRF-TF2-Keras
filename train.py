@@ -1,5 +1,5 @@
 # NeRF project
-import simple_dataloader
+import sampledata_loader
 from parameters import NeRFParams
 from monitoring import SaveBestModel, TrainingMonitor
 from nerf_core import architecture
@@ -9,7 +9,7 @@ from nerf_core import loss
 
 
 def main():
-    images, poses, focal_length = simple_dataloader.get_np_data_from_local_file('./data/tiny_nerf_data.npz')
+    images, poses, focal_length = sampledata_loader.get_np_data_from_local_file('./data/tiny_nerf_data.npz')
     num_images, image_h, image_w, _ = images.shape
     nerf_params = NeRFParams(
         image_h=image_h,
@@ -17,7 +17,7 @@ def main():
         focal_length=focal_length,
     )
 
-    train_ds, val_ds = simple_dataloader.get_train_val_tf_ds(images, poses, nerf_params)
+    train_ds, val_ds = sampledata_loader.get_train_val_tf_ds(images, poses, nerf_params)
     nerf_architecture = architecture.DNNArchitecture(nerf_params, n_layers=8).get_nerf_architecture()
     nerf_architecture.summary()
 
@@ -50,6 +50,10 @@ def main():
             SaveBestModel(weights_save_dir, nerf_params,)],
         steps_per_epoch=(num_images * nerf_params.TRAIN_TEST_SPLIT) // nerf_params.batch_size,
     )
+
+    video_result_save_dir = './result_videos'
+    create_novel_view_video(video_result_save_dir)
+    tf.io.gfile.makedirs(save_dir)
 
 
 if __name__ == "__main__":

@@ -28,7 +28,7 @@ pip install -r requirements.txt
 
 `tests`
 ```bash
-python3 simple_dataloader_test.py
+python3 sampledata_loader_test.py
 python3 train_test.py
 python3 -m nerf_core.ray_test
 ```
