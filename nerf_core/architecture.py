@@ -45,14 +45,10 @@ class DNNArchitecture(NeRFArchitecture):
     def get_nerf_architecture(
         self,
     )->tf.keras.Model:
-        n = self.nerf_params.image_h * self.nerf_params.image_w * self.nerf_params.n_samples_per_ray
-        output_ray_dim = (
-            self.nerf_params.n_pos_encoding_fn
-            * self.nerf_params.image_ch 
-            * self.nerf_params.pos_encoding_dims 
-            + self.nerf_params.image_ch) # positional encoding were concatenated on default channel
+        num = self.nerf_params.get_number_of_flatten_rays()
+        dim = self.nerf_params.get_dimension_of_network_input_ray()
         # Input layer
-        input = tf.keras.Input(shape=(n, output_ray_dim))
+        input = tf.keras.Input(shape=(num, dim))
         x = input
         # Backbone
         for i in range(self.n_layers):

@@ -6,6 +6,7 @@ from nerf_core import architecture
 from nerf_core import nerf
 from nerf_core import optimizer
 from nerf_core import loss
+from utils import videovis
 
 
 def main():
@@ -51,10 +52,12 @@ def main():
         steps_per_epoch=(num_images * nerf_params.TRAIN_TEST_SPLIT) // nerf_params.batch_size,
     )
 
+    # create video from novel view images
     video_result_save_dir = './result_videos'
-    create_novel_view_video(video_result_save_dir)
-    tf.io.gfile.makedirs(save_dir)
-
+    videovis.write_video(
+        nerf_model=nerf_model,
+        save_dir=video_result_save_dir,
+    )
 
 if __name__ == "__main__":
     main()

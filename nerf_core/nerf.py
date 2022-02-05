@@ -114,7 +114,6 @@ class NeRFModel(ValidateNeRFModel):
         self,
         rays_flat, 
         ray_t,
-        rand=True,
     ):
         """Generates the RGB image and depth map from model prediction.
 
@@ -122,7 +121,6 @@ class NeRFModel(ValidateNeRFModel):
             rays_flat: The flattened rays 
                 that serve as the input to the NeRF model.
             ray_t: The sample points for the rays.
-            rand: Choice to randomise the sampling strategy.
 
         Returns:
             Tuple of rgb image and depth map.
@@ -143,19 +141,12 @@ class NeRFModel(ValidateNeRFModel):
         sigma_a = tf.nn.relu(predictions[..., -1])
 
         # Get the distance of adjacent intervals.
-        delta = ray_t[..., 1:] - ray_t[..., :-1]
-        if rand:
-            delta = tf.concat(
-                [delta, tf.broadcast_to([1e10], shape=(self.nerf_params.batch_size, self.nerf_params.image_h, self.nerf_params.image_w, 1))], 
-                axis=-1
-            )
-            alpha = 1.0 - tf.exp(-sigma_a * delta)
-        else:
-            delta = tf.concat(
-                [delta, tf.broadcast_to([1e10], shape=(self.nerf_params.batch_size, 1))], 
-                axis=-1
-            )
-            alpha = 1.0 - tf.exp(-sigma_a * delta[:, None, None, :])
+        dt = ray_t[..., 1:] - ray_t[..., :-1]
+        dt = tf.concat(
+            [dt, tf.broadcast_to([1e10], shape=(self.nerf_params.batch_size, self.nerf_params.image_h, self.nerf_params.image_w, 1))], 
+            axis=-1
+        )
+        alpha = 1.0 - tf.exp(-sigma_a * dt)
 
         # Get transmittance.
         e = 1e-10
@@ -163,10 +154,6 @@ class NeRFModel(ValidateNeRFModel):
         weights = alpha * transmittance
         rgb = tf.reduce_sum(weights[..., None] * rgb, axis=-2)
 
-        # Get depth
-        if rand:
-            depth_map = tf.reduce_sum(weights * ray_t, axis=-1)
-        else:
-            depth_map = tf.reduce_sum(weights * ray_t[:, None, None], axis=-1)
+        depth_map = tf.reduce_sum(weights * ray_t, axis=-1)
 
         return (rgb, depth_map)

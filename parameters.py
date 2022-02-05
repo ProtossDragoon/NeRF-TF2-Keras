@@ -37,3 +37,21 @@ class NeRFParams(CommonParams):
         self.pos_encoding_dims = pos_encoding_dims
         self.n_samples_per_ray = n_samples_per_ray
         self.n_pos_encoding_fn = 2 # sin, cos
+
+    def get_number_of_flatten_rays(self):
+        n = (
+            self.image_h 
+            * self.image_w 
+            * self.n_samples_per_ray
+        )
+        return n
+
+    def get_dimension_of_network_input_ray(self):
+        d = (
+            self.n_pos_encoding_fn
+            * self.image_ch
+            * self.pos_encoding_dims
+            + self.image_ch # positional encoding were concatenated on default channel
+        )
+        return d
+
