@@ -2,7 +2,7 @@
 import unittest
 
 # NeRF project
-import simple_dataloader
+import sampledata_loader
 from parameters import NeRFParams
 from nerf_core import architecture
 from nerf_core import nerf
@@ -15,7 +15,7 @@ def setUpModule():
     global num_images
     global nerf_params
     # Load numpy formed data.
-    images, poses, focal_length = simple_dataloader.get_np_data_from_local_file('./data/tiny_nerf_data.npz')
+    images, poses, focal_length = sampledata_loader.get_np_data_from_local_file('./data/tiny_nerf_data.npz')
     num_images, image_h, image_w, _ = images.shape
     # Save params.
     nerf_params = NeRFParams(
@@ -31,7 +31,7 @@ class SmallDatasetShortTraining(unittest.TestCase):
         nerf_params.epochs = 2
 
     def test_short_training(self):
-        train_ds, val_ds = simple_dataloader.get_train_val_tf_ds(images, poses, nerf_params)
+        train_ds, val_ds = sampledata_loader.get_train_val_tf_ds(images, poses, nerf_params)
         nerf_architecture = architecture.DNNArchitecture(nerf_params, n_layers=8).get_nerf_architecture()
         nerf_architecture.summary()
 

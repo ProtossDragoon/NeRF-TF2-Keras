@@ -28,9 +28,10 @@ pip install -r requirements.txt
 
 `tests`
 ```bash
-python3 simple_dataloader_test.py
+python3 sampledata_loader_test.py
 python3 train_test.py
 python3 -m nerf_core.ray_test
+python3 -m utils.videovis_test
 ```
 
 - If there aren't any error, go to the next step.
@@ -49,6 +50,10 @@ python3 train.py
 
 *80 epochs, 64 samples per ray*
 ![80epoch_64samples](https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/training_2.gif)
+
+Reconstruction visualization result will be saved with .mp4 format.
+*40 epochs, 32 samples per ray*
+<img src="https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result.gif" alt="40epoch_32samples" width="300" height="300"/>
 
 ## Note
 
