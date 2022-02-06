@@ -1,3 +1,6 @@
 data
 result_images
 .vscode
+
+# mac os
+._*
