@@ -75,6 +75,7 @@ python3 train.py
   <tr>
     <td>40 epochs<br>32 samples per ray</td>
     <td colspan="2" align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result.gif alt="40epoch_32samples" width="300" height="300"></td>
+    <td colspan="2" align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result_2.gif alt="40epoch_32samples" width="300" height="300"></td>
   </tr>
 </tbody>
 </table>
