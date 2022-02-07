@@ -53,11 +53,11 @@ python3 train.py
 </thead>
 <tbody>
   <tr>
-    <td>20 epochs<br>32 samples per ray</td>
+    <td>40epochs<br>32samples/ray</td>
     <td colspan="2" align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/training.gif alt="20epoch_32samples"></td>
   </tr>
   <tr>
-    <td>80 epochs<br>64 samples per ray</td>
+    <td>80epochs<br>64samples/ray</td>
     <td colspan="2" align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/training_2.gif alt="80epoch_64samples"></td>
   </tr>
 </tbody>
@@ -74,10 +74,16 @@ python3 train.py
 </thead>
 <tbody>
   <tr>
-    <td>40 epochs<br>32 samples per ray</td>
+    <td>40epochs<br>32samples/ray</td>
     <td align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result.gif alt="40epoch_32samples" width="300" height="300"></td>
     <td align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result_2.gif alt="40epoch_32samples" width="300" height="300"></td>
     <td align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result_3.gif alt="40epoch_32samples" width="300" height="300"></td>
+  </tr>
+  <tr>
+    <td>80epochs<br>64samples/ray</td>
+    <td align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result_80_64_1.gif alt="40epoch_32samples" width="300" height="300"></td>
+    <td></td>
+    <td></td>    
   </tr>
 </tbody>
 </table>
