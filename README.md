@@ -47,7 +47,7 @@ python3 train.py
 <table>
 <thead align="center">
   <tr>
-    <th></th>
+    <th>Monitor</th>
     <th>Trainig</th>
   </tr>
 </thead>
