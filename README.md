@@ -68,7 +68,9 @@ python3 train.py
 <thead align="center">
   <tr>
     <th></th>
-    <th>Visualization</th>
+    <th>pitch=-30.0</th>
+    <th>pitch=-10.0</th>
+    <th>pitch=+10.0</th>
   </tr>
 </thead>
 <tbody>
