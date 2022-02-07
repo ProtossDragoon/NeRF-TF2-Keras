@@ -1,6 +1,6 @@
-# NeRF
+# NeRF Tensorflow2 & Keras Implementation
 
-NeRF Tensorflow2, Keras implementation
+Neural Radience Field Tensorflow2 & Keras implementation
 
 ## Quickstart
 
@@ -17,7 +17,6 @@ NeRF Tensorflow2, Keras implementation
 python3 -m venv ~/dev/tf2
 source ~/dev/tf2/bin/activate
 ```
-
 
 `requirements`
 ```bash
