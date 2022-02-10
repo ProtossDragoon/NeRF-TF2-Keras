@@ -54,7 +54,7 @@ def main():
 
     # create video from novel view images
     video_result_save_dir = './result_videos'
-    videovis.write_video(
+    videovis.write_multiple_videos(
         nerf_model=nerf_model,
         save_dir=video_result_save_dir,
     )

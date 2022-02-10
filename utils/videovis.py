@@ -112,5 +112,21 @@ def write_video(
     )
 
 
+def write_multiple_videos(
+    nerf_model:NeRFModel,
+    pitchs:list=[-30, -10, 10, 30],
+    **kwargs,
+):
+    def get_kwargs():
+        return kwargs
+
+    for i in pitchs:
+        write_video(
+            nerf_model=nerf_model,
+            rotation_pitch=i,
+            **get_kwargs(),
+        )
+
+
 if __name__ == '__main__':
     pass

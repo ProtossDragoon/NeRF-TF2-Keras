@@ -57,6 +57,16 @@ class VideoVisualizer(unittest.TestCase):
             video_name=video_name,
         )
 
+    def test_write_multiple_videos(self):
+        global save_dir, video_name
+        save_dir='./for_test_temp_dir'
+        video_name='for_test_temp_vid.mp4'
+        videovis.write_multiple_videos(
+            nerf_model=nerf_model,
+            save_dir=save_dir,
+            video_name=video_name,
+        )
+
 
 def tearDownModule():
     tf.io.gfile.rmtree(save_dir)
