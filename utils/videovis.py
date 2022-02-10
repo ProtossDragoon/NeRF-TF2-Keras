@@ -1,3 +1,10 @@
+# Internal Module
+import os
+import logging
+logging.basicConfig()
+logger = logging.getLogger('videovis.py')
+logger.setLevel(logging.INFO)
+
 # Third party Packages and Modules
 import tensorflow as tf
 import numpy as np
@@ -13,13 +20,14 @@ from nerf_core.nerf import NeRFModel
 
 def hemesphere_ray_batch_generator(
     nerf_params:NeRFParams,
+    rotation_pitch:int,
 ):
     # Iterate over different theta value and generate scenes.
     for yaw in tqdm(np.linspace(0.0, 360.0, 120, endpoint=False)):
         # Get the camera to world matrix.
         c2w = transform.pose_spherical(
             rotation_yaw=yaw,
-            rotation_pitch=-30.0,
+            rotation_pitch=rotation_pitch,
             translation_z=4.0,
         )
         (rays_flat, ray_t) = ray.pose_to_ray(
@@ -34,7 +42,8 @@ def hemesphere_ray_batch_generator(
 
 
 def get_hemesphere_ray_tfds(
-    nerf_params:NeRFParams
+    nerf_params:NeRFParams,
+    rotation_pitch:int,
 ):
     #NOTE: Unstable TPU Compatibiltiy
     num = nerf_params.get_number_of_flatten_rays()
@@ -43,7 +52,10 @@ def get_hemesphere_ray_tfds(
     w = nerf_params.image_w
     n = nerf_params.n_samples_per_ray
     dataset = tf.data.Dataset.from_generator(
-        lambda: hemesphere_ray_batch_generator(nerf_params),
+        lambda: hemesphere_ray_batch_generator(
+            nerf_params, 
+            rotation_pitch=rotation_pitch
+        ),
         output_signature=(
             tf.TensorSpec(shape=(num, dim), dtype=tf.float32,), # rays_flat
             tf.TensorSpec(shape=(h, w, n), dtype=tf.float32,), # ray_t
@@ -54,10 +66,11 @@ def get_hemesphere_ray_tfds(
 
 def get_rendered_images(
     nerf_model:NeRFModel,
+    rotation_pitch:int=-30,
 ):
     images = []
     nerf_params = nerf_model.nerf_params
-    tfds = get_hemesphere_ray_tfds(nerf_params)
+    tfds = get_hemesphere_ray_tfds(nerf_params, rotation_pitch=rotation_pitch)
     for (batched_rays_flat, batched_ray_t) in iter(tfds):
         inferenced_batched_rgb, _ = nerf_model.render_rgb_depth(
             batched_rays_flat, batched_ray_t,
@@ -72,14 +85,47 @@ def write_video(
     nerf_model:NeRFModel,
     save_dir:str='./result_videos',
     video_name:str='result.mp4',
+    rotation_pitch:int=None,
 ):
+    def rename(video_name, rotation_pitch):
+        ret = video_name
+        if rotation_pitch is not None:
+            name, extend = os.path.splitext(video_name)
+            ret = f'{name}_{rotation_pitch}{extend}'
+        return ret
+
+    video_name = rename(video_name, rotation_pitch)
     video_fullpath = tf.io.gfile.join(save_dir, video_name)
     tf.io.gfile.makedirs(save_dir)
-    images = get_rendered_images(nerf_model)
+    logger.info(f'Create video. Path: {video_fullpath}')
+
+    def get_kwargs():
+        kwargs = {}
+        if rotation_pitch is not None:
+            kwargs['rotation_pitch'] = rotation_pitch
+        return kwargs
+
+    images = get_rendered_images(nerf_model, **get_kwargs())
     imageio.mimwrite(
         video_fullpath, images,
         fps=30, quality=7, macro_block_size=None
     )
+
+
+def write_multiple_videos(
+    nerf_model:NeRFModel,
+    pitchs:list=[-30, -10, 10, 30],
+    **kwargs,
+):
+    def get_kwargs():
+        return kwargs
+
+    for i in pitchs:
+        write_video(
+            nerf_model=nerf_model,
+            rotation_pitch=i,
+            **get_kwargs(),
+        )
 
 
 if __name__ == '__main__':

@@ -36,7 +36,7 @@ class VideoVisualizer(unittest.TestCase):
     def test_hemesphere_ray_batch_generator(self):
         print(f'\nDesired rays_flat shape: {rays_flat_shape}')
         print(  f'Desired ray_t shape: {ray_t_shape}')
-        gen = videovis.hemesphere_ray_batch_generator(nerf_params)
+        gen = videovis.hemesphere_ray_batch_generator(nerf_params, -30)
         for i, (rays_flat, ray_t) in enumerate(gen):
             self.assertEqual(tuple(rays_flat.shape), rays_flat_shape)
             self.assertEqual(tuple(ray_t.shape), ray_t_shape)
@@ -52,6 +52,16 @@ class VideoVisualizer(unittest.TestCase):
         save_dir='./for_test_temp_dir'
         video_name='for_test_temp_vid.mp4'
         videovis.write_video(
+            nerf_model=nerf_model,
+            save_dir=save_dir,
+            video_name=video_name,
+        )
+
+    def test_write_multiple_videos(self):
+        global save_dir, video_name
+        save_dir='./for_test_temp_dir'
+        video_name='for_test_temp_vid.mp4'
+        videovis.write_multiple_videos(
             nerf_model=nerf_model,
             save_dir=save_dir,
             video_name=video_name,
