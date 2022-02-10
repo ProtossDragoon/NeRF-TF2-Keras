@@ -8,10 +8,12 @@ class CommonParams():
     AUTO = tf.data.AUTOTUNE
     TRAIN_TEST_SPLIT = 0.8
 
-    def __init__(self
+    def __init__(self,
+        batch_size:int=5,
+        epochs:int=40,
     ):
-        self.batch_size = 5
-        self.epochs = 40
+        self.batch_size = batch_size
+        self.epochs = epochs
 
 
 class NeRFParams(CommonParams):
