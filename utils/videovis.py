@@ -1,11 +1,11 @@
 # Internal Module
 import os
 import logging
-logger = logging.getLogger('videovis')
+logging.basicConfig()
+logger = logging.getLogger('videovis.py')
 logger.setLevel(logging.INFO)
 
 # Third party Packages and Modules
-from ast import parse
 import tensorflow as tf
 import numpy as np
 import imageio
