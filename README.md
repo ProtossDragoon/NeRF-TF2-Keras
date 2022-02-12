@@ -96,7 +96,9 @@ python3 train.py
 
 ### 2. Implementataion
 
-- `FILLME`
+- [ ] Hierarchical View Sampling
+- [x] Positional Encoding
+- [ ] Transform Ray to NDC
 
 ### 3. Test Environments
 
