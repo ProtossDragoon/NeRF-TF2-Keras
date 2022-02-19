@@ -11,7 +11,7 @@ import tqdm
 import json
 
 # NeRF project
-from utils import runtime
+from nerf_utils import runtime
 from parameters import NeRFParams
 from nerf_core.nerf import NeRFModel
 

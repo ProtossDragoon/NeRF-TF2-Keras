@@ -12,7 +12,7 @@ import imageio
 from tqdm import tqdm
 
 # NeRF project
-import utils.transform as transform
+import nerf_utils.transform as transform
 import nerf_core.ray as ray
 from parameters import NeRFParams
 from nerf_core.nerf import NeRFModel 

@@ -9,7 +9,7 @@ import sampledata_loader
 from parameters import NeRFParams
 from nerf_core import architecture
 from nerf_core import nerf
-from utils import videovis
+from nerf_utils import videovis
 
 
 def setUpModule():

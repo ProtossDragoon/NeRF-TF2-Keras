@@ -6,7 +6,7 @@ from nerf_core import architecture
 from nerf_core import nerf
 from nerf_core import optimizer
 from nerf_core import loss
-from utils import videovis
+from nerf_utils import videovis
 
 
 def main():
