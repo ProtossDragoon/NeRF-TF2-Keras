@@ -81,9 +81,9 @@ python3 train.py
   </tr>
   <tr>
     <td>80epochs<br>64samples/ray</td>
-    <td align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result_80_64_1.gif alt="40epoch_32samples" width="300" height="300"></td>
-    <td></td>
-    <td></td>    
+    <td align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result_80_64_1.gif alt="80epoch_64samples" width="300" height="300"></td>
+    <td align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result_80_64_2.gif alt="80epoch_64samples" width="300" height="300"></td>
+    <td align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result_80_64_3.gif alt="80epoch_64samples" width="300" height="300"></td>
   </tr>
 </tbody>
 </table>
@@ -96,7 +96,9 @@ python3 train.py
 
 ### 2. Implementataion
 
-- `FILLME`
+- [ ] Hierarchical View Sampling
+- [x] Positional Encoding
+- [ ] Transform Ray to NDC
 
 ### 3. Test Environments
 
