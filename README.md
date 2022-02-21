@@ -74,16 +74,22 @@ python3 train.py
 </thead>
 <tbody>
   <tr>
-    <td>40epochs<br>32samples/ray</td>
+    <td>40epochs<br>32samples/ray<br>16posenc<br>5batch</td>
     <td align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result.gif alt="40epoch_32samples" width="300" height="300"></td>
     <td align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result_2.gif alt="40epoch_32samples" width="300" height="300"></td>
     <td align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result_3.gif alt="40epoch_32samples" width="300" height="300"></td>
   </tr>
   <tr>
-    <td>80epochs<br>64samples/ray</td>
+    <td>80epochs<br>64samples/ray<br>16posenc<br>5batch</td>
     <td align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result_80_64_1.gif alt="80epoch_64samples" width="300" height="300"></td>
     <td align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result_80_64_2.gif alt="80epoch_64samples" width="300" height="300"></td>
     <td align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result_80_64_3.gif alt="80epoch_64samples" width="300" height="300"></td>
+  </tr>
+  <tr>
+    <td>160epochs<br>64samples/ray<br>32posenc<br>1batch</td>
+    <td align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result_160_64_32_1b-30.gif alt="160epoch_64samples_32positionalencoding_1batch" width="300" height="300"></td>
+    <td align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result_160_64_32_1b-10.gif alt="160epoch_64samples_32positionalencoding_1batch" width="300" height="300"></td>
+    <td align="center"><img src=https://github.com/ProtossDragoon/NeRF-TF2-Keras/blob/master/docs/result_160_64_32_1b_10.gif alt="160epoch_64samples_32positionalencoding_1batch" width="300" height="300"></td>
   </tr>
 </tbody>
 </table>
